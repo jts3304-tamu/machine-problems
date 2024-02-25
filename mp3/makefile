@@ -7,7 +7,8 @@ GCC_OPTIONS = -m32 -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -fno-exce
 all: kernel.bin
 
 clean:
-	rm -f *.o *.bin
+	find . -type f -name '*.o' ! -name 'cont_frame_pool.o' -exec rm -f {} +
+	rm -f *.bin
 
 start.o: start.asm gdt_low.asm idt_low.asm irq_low.asm
 	nasm -f elf -o start.o start.asm
@@ -63,8 +64,9 @@ paging_low.o: paging_low.asm paging_low.H
 page_table.o: page_table.C page_table.H paging_low.H
 	$(GCC) $(GCC_OPTIONS) -c -o page_table.o page_table.C
 
-cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
-	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
+# (already given this, dont overwrite)
+# cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
+# 	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
 
 # ==== KERNEL MAIN FILE =====
 
