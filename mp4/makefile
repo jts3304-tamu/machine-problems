@@ -7,10 +7,11 @@ GCC_OPTIONS = -m32 -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -fno-exce
 all: kernel.bin
 
 clean:
-	rm -f *.o *.bin
+	find . -type f -name '*.o' ! -name 'cont_frame_pool.o' -exec rm -f {} +
+	rm -f *.bin
 
 start.o: start.asm gdt_low.asm idt_low.asm irq_low.asm
-	$(AS) -f elf -o start.o start.asm
+	nasm -f elf -o start.o start.asm
 
 utils.o: utils.C utils.H
 	$(GCC) $(GCC_OPTIONS) -c -o utils.o utils.C
@@ -28,7 +29,7 @@ machine.o: machine.C machine.H
 	$(GCC) $(GCC_OPTIONS) -c -o machine.o machine.C
 
 machine_low.o: machine_low.asm machine_low.H
-	$(AS) -f elf -o machine_low.o machine_low.asm
+	nasm -f elf -o machine_low.o machine_low.asm
 
 # ==== EXCEPTIONS AND INTERRUPTS =====
 
@@ -58,26 +59,25 @@ simple_keyboard.o: simple_keyboard.C simple_keyboard.H
 # ==== MEMORY =====
 
 paging_low.o: paging_low.asm paging_low.H
-	$(AS) -f elf -o paging_low.o paging_low.asm
+	nasm -f elf -o paging_low.o paging_low.asm
 
-page_table.o: page_table.C page_table.H paging_low.H vm_pool.H cont_frame_pool.H
+page_table.o: page_table.C page_table.H paging_low.H
 	$(GCC) $(GCC_OPTIONS) -c -o page_table.o page_table.C
 
-cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
-	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
-
-vm_pool.o: vm_pool.C vm_pool.H page_table.H
-	$(GCC) $(GCC_OPTIONS) -c -o vm_pool.o vm_pool.C
+# (already given this, dont overwrite)
+# cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
+# 	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
 
 # ==== KERNEL MAIN FILE =====
 
-kernel.o: kernel.C console.H simple_timer.H page_table.H vm_pool.H 
+kernel.o: kernel.C console.H simple_timer.H page_table.H
 	$(GCC) $(GCC_OPTIONS) -c -o kernel.o kernel.C
 
+
 kernel.bin: start.o utils.o kernel.o assert.o console.o gdt.o idt.o irq.o exceptions.o \
-   interrupts.o simple_timer.o simple_keyboard.o paging_low.o page_table.o cont_frame_pool.o vm_pool.o machine.o \
+   interrupts.o simple_timer.o simple_keyboard.o paging_low.o page_table.o cont_frame_pool.o machine.o \
    machine_low.o 
 	$(LD) -melf_i386 -T linker.ld -o kernel.bin start.o utils.o kernel.o assert.o console.o \
    gdt.o idt.o irq.o exceptions.o \
-   interrupts.o simple_timer.o simple_keyboard.o paging_low.o page_table.o cont_frame_pool.o vm_pool.o machine.o \
+   interrupts.o simple_timer.o simple_keyboard.o paging_low.o page_table.o cont_frame_pool.o machine.o \
    machine_low.o
