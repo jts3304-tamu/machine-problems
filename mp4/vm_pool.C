@@ -1,9 +1,9 @@
 /*
  File: vm_pool.C
- 
- Author:
+
+ Author: Jackson Stewart
  Date  :
- 
+
  */
 
 /*--------------------------------------------------------------------------*/
@@ -16,11 +16,11 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-#include "vm_pool.H"
-#include "console.H"
-#include "utils.H"
 #include "assert.H"
+#include "console.H"
 #include "simple_keyboard.H"
+#include "utils.H"
+#include "vm_pool.H"
 
 /*--------------------------------------------------------------------------*/
 /* DATA STRUCTURES */
@@ -44,10 +44,10 @@
 /* METHODS FOR CLASS   V M P o o l */
 /*--------------------------------------------------------------------------*/
 
-VMPool::VMPool(unsigned long  _base_address,
-               unsigned long  _size,
+VMPool::VMPool(unsigned long _base_address,
+               unsigned long _size,
                ContFramePool *_frame_pool,
-               PageTable     *_page_table) {
+               PageTable *_page_table) {
     assert(false);
     Console::puts("Constructed VMPool object.\n");
 }
@@ -66,4 +66,3 @@ bool VMPool::is_legitimate(unsigned long _address) {
     assert(false);
     Console::puts("Checked whether address is part of an allocated region.\n");
 }
-

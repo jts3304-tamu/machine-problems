@@ -160,19 +160,13 @@ int main() {
 
     /* -- INITIALIZE FRAME POOLS -- */
 
-    ContFramePool kernel_mem_pool(KERNEL_POOL_START_FRAME,
-                                  KERNEL_POOL_SIZE,
-                                  0);
+    ContFramePool kernel_mem_pool(KERNEL_POOL_START_FRAME, KERNEL_POOL_SIZE, 0);
 
-    unsigned long n_info_frames =
-        ContFramePool::needed_info_frames(PROCESS_POOL_SIZE);
+    unsigned long n_info_frames = ContFramePool::needed_info_frames(PROCESS_POOL_SIZE);
 
-    unsigned long process_mem_pool_info_frame =
-        kernel_mem_pool.get_frames(n_info_frames);
+    unsigned long process_mem_pool_info_frame = kernel_mem_pool.get_frames(n_info_frames);
 
-    ContFramePool process_mem_pool(PROCESS_POOL_START_FRAME,
-                                   PROCESS_POOL_SIZE,
-                                   process_mem_pool_info_frame);
+    ContFramePool process_mem_pool(PROCESS_POOL_START_FRAME, PROCESS_POOL_SIZE, process_mem_pool_info_frame);
 
     /* Take care of the hole in the memory. */
     process_mem_pool.mark_inaccessible(MEM_HOLE_START_FRAME, MEM_HOLE_SIZE);
@@ -250,6 +244,8 @@ int main() {
 #endif
 
     TestPassed();
+    // for (;;)
+    //     ;
 }
 
 void GeneratePageTableMemoryReferences(unsigned long start_address, int n_references) {
